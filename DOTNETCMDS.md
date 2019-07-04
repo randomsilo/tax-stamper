@@ -23,6 +23,13 @@ mkdir -p ./tax-stamper.utility
 ## is made.
 sudo mkdir -p /opt/data
 sudo chown USER:GROUP /opt/data
+
+# convention
+## /opt/data - passing in docker filesystem
+### /opt/data/instance_name - an instance of the software like dan1_customer2_dev
+#### /opt/data/instance_name/application_name - tax-stamper or another microservice setup like this one
+##### /opt/data/instance_name/application_name/db - home of the sqlite database files
+##### /opt/data/instance_name/application_name/logs - home of the serilog log files
 ```
 
 ## Projects

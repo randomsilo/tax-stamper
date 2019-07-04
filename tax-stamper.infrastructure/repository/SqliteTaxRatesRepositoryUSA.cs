@@ -11,11 +11,11 @@ using tax_stamper.domain.repository;
 
 namespace tax_stamper.infrastructure.repository
 {
-    public class TaxRatesRepositoryUSA : ITaxRatesRepositoryUSA
+    public class SqliteTaxRatesRepositoryUSA : ITaxRatesRepositoryUSA
     {
         private ILogger _logger;
         private string _databaseFile { get; set; }
-        public TaxRatesRepositoryUSA(ILogger logger, string name, string instanceDirectory, string baseDirectory = @"/opt/data")
+        public SqliteTaxRatesRepositoryUSA(ILogger logger, string name, string instanceDirectory, string baseDirectory = @"/opt/data")
         {
             // logger
             _logger = logger;
