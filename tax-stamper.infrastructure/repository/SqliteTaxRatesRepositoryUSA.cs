@@ -99,7 +99,7 @@ namespace tax_stamper.infrastructure.repository
                 model = connection.Query<TaxRateUSA>(GetFetchByIdStatement(), new { Id = id }).FirstOrDefault();
             }
 
-            _logger.Verbose($"{this.GetType().Name} OUT FetchById, model.Id is {model.Id}");
+            _logger.Verbose($"{this.GetType().Name} OUT FetchById");
             return model;
         }
         public TaxRateUSA FetchByZipcode(int zipcode, int zipPlus4, DateTime onDate)
@@ -120,7 +120,7 @@ namespace tax_stamper.infrastructure.repository
                     }).FirstOrDefault();
             }
 
-            _logger.Verbose($"{this.GetType().Name} OUT FetchByZipcode, model.Id is {model.Id}");
+            _logger.Verbose($"{this.GetType().Name} OUT FetchByZipcode");
             return model;
         }
 
@@ -145,7 +145,9 @@ namespace tax_stamper.infrastructure.repository
                         , TaxRateCity           REAL NOT NULL
                         , TaxRateLocal1         REAL NOT NULL
                         , TaxRateLocal2         REAL NOT NULL
-                    );");
+                    );
+                    CREATE INDEX idx_taxrateusa_searchkey ON TaxRateUSA (Zipcode, ZipPlus4StartRange, ZipPlus4EndRange, EffectiveDate);
+                    ");
                 
             }
         }
@@ -157,7 +159,8 @@ namespace tax_stamper.infrastructure.repository
 
         private string GetInsertStatement()
         {
-            return @"INSERT INTO TaxRateUSA ( 
+            _logger.Verbose($"{this.GetType().Name} IN GetInsertStatement");
+            var sql = @"INSERT INTO TaxRateUSA ( 
                         Zipcode
                         , ZipPlus4StartRange
                         , ZipPlus4EndRange
@@ -179,16 +182,24 @@ namespace tax_stamper.infrastructure.repository
                         , @TaxRateLocal2
                     );
                     SELECT last_insert_rowid();";
+
+            _logger.Verbose(sql);
+            return sql;
         }
 
         private string GetDeleteStatement()
         {
-            return $"DELETE FROM TaxRateUSA WHERE Id = @Id;";
+            _logger.Verbose($"{this.GetType().Name} IN GetDeleteStatement");
+            var sql = $"DELETE FROM TaxRateUSA WHERE Id = @Id;";
+
+            _logger.Verbose(sql);
+            return sql;
         }
 
         private string GetUpdateStatement()
         {
-            return @"UPDATE TaxRateUSA ( 
+            _logger.Verbose($"{this.GetType().Name} IN GetUpdateStatement");
+            var sql = @"UPDATE TaxRateUSA
                      SET
                         Zipcode = @Zipcode
                         , ZipPlus4StartRange = @ZipPlus4StartRange
@@ -200,12 +211,17 @@ namespace tax_stamper.infrastructure.repository
                         , TaxRateLocal1 = @TaxRateLocal1 
                         , TaxRateLocal2 = @TaxRateLocal2 
                     WHERE Id = @Id;";
+
+            _logger.Verbose(sql);
+            return sql;
         }
 
         private string GetFetchByIdStatement()
         {
-            return @"SELECT ( 
-                        Zipcode
+            _logger.Verbose($"{this.GetType().Name} IN GetFetchByIdStatement");
+            var sql = @"SELECT
+                        Id
+                        , Zipcode
                         , ZipPlus4StartRange
                         , ZipPlus4EndRange
                         , datetime(EffectiveDate,'unixepoch') AS EffectiveDate
@@ -215,12 +231,17 @@ namespace tax_stamper.infrastructure.repository
                         , TaxRateLocal1 
                         , TaxRateLocal2 
                     FROM TaxRateUSA WHERE Id = @Id;";
+
+            _logger.Verbose(sql);
+            return sql;
         }
 
         private string GetFetchByZipcodeStatement()
         {
-            return @"SELECT ( 
-                        Zipcode
+            _logger.Verbose($"{this.GetType().Name} IN GetFetchByZipcodeStatement");
+            var sql =  @"SELECT 
+                        Id
+                        , Zipcode
                         , ZipPlus4StartRange
                         , ZipPlus4EndRange
                         , datetime(EffectiveDate,'unixepoch') AS EffectiveDate
@@ -239,6 +260,9 @@ namespace tax_stamper.infrastructure.repository
                     ORDER BY
                         EffectiveDate
                     LIMIT 1;";
+
+            _logger.Verbose(sql);
+            return sql;
         }
 
     }
