@@ -13,61 +13,122 @@ namespace tax_stamper.infrastructure.repository
 {
     public class TaxRatesRepositoryUSA : ITaxRatesRepositoryUSA
     {
+        private ILogger _logger;
         private string _databaseFile { get; set; }
-        public TaxRatesRepositoryUSA(string name, string instanceDirectory, string baseDirectory = @"/opt/data")
+        public TaxRatesRepositoryUSA(ILogger logger, string name, string instanceDirectory, string baseDirectory = @"/opt/data")
         {
+            // logger
+            _logger = logger;
+            _logger.Verbose($"{this.GetType().Name} IN Constructor");
+
             string filePath = $"{baseDirectory}/{instanceDirectory}/";
             string fileName = $"{name}.sqlite";
             _databaseFile = $"{filePath}/{fileName}";
 
-            // Check for Database Directory
+            // check for database directory
             if (!System.IO.Directory.Exists(filePath))
             {
+                _logger.Verbose($"{this.GetType().Name} missing {filePath}, will try to create directory");
                 System.IO.Directory.CreateDirectory(filePath);
             }
 
-            // Check for Database
+            // check for database
             if (!File.Exists(_databaseFile))
             {
-                // Create Database
+                _logger.Verbose($"{this.GetType().Name} missing {_databaseFile}, will try to create database");
+
+                // create database
                 CreateDatabase();
             }
         }
 
         public long Create(TaxRateUSA record)
         {
+            _logger.Verbose($"{this.GetType().Name} IN Create");
+
             long id = 0;
 
+            using (var connection = GetDatabaseConnection())
+            {
+                connection.Open();
+                id = connection.Query<long>(GetInsertStatement(), record).First();
+            }
+
+            _logger.Verbose($"{this.GetType().Name} OUT Create, id is {id}");
             return id;
         }
         public long Delete(TaxRateUSA record)
         {
+            _logger.Verbose($"{this.GetType().Name} IN Delete");
+
             long rowsDeleted = 0;
 
+            using (var connection = GetDatabaseConnection())
+            {
+                connection.Open();
+                rowsDeleted = connection.Execute(GetDeleteStatement(), new { Id = record.Id });
+            }
+
+            _logger.Verbose($"{this.GetType().Name} OUT Delete, rowsDeleted is {rowsDeleted}");
             return rowsDeleted;
         }
         public long Update(TaxRateUSA record)
         {
+            _logger.Verbose($"{this.GetType().Name} IN Update");
+
             long rowsUpdated = 0;
 
+            using (var connection = GetDatabaseConnection())
+            {
+                connection.Open();
+                rowsUpdated = connection.Execute(GetUpdateStatement(), record);
+            }
+
+            _logger.Verbose($"{this.GetType().Name} OUT Delete, rowsUpdated is {rowsUpdated}");
             return rowsUpdated;
         }
         public TaxRateUSA FetchById(long id)
         {
+            _logger.Verbose($"{this.GetType().Name} IN FetchById");
+
             var model = new TaxRateUSA();
 
+            using (var connection = GetDatabaseConnection())
+            {
+                connection.Open();
+                model = connection.Query<TaxRateUSA>(GetFetchByIdStatement(), new { Id = id }).FirstOrDefault();
+            }
+
+            _logger.Verbose($"{this.GetType().Name} OUT FetchById, model.Id is {model.Id}");
             return model;
         }
-        public TaxRateUSA FetchByZipcode(int zipcode, int zipPlus4)
+        public TaxRateUSA FetchByZipcode(int zipcode, int zipPlus4, DateTime onDate)
         {
+            _logger.Verbose($"{this.GetType().Name} IN FetchByZipcode");
+
             var model = new TaxRateUSA();
 
+            using (var connection = GetDatabaseConnection())
+            {
+                connection.Open();
+                model = connection.Query<TaxRateUSA>(
+                    GetFetchByIdStatement()
+                    , new { 
+                        Zipcode = zipcode
+                        , ZipPlus4 = zipPlus4
+                        , EffectiveDate = onDate
+                    }).FirstOrDefault();
+            }
+
+            _logger.Verbose($"{this.GetType().Name} OUT FetchByZipcode, model.Id is {model.Id}");
             return model;
         }
 
 
         private void CreateDatabase()
         {
+            _logger.Verbose($"{this.GetType().Name} IN Create");
+
             using (var connection = GetDatabaseConnection())
             {
                 connection.Open();
@@ -92,6 +153,92 @@ namespace tax_stamper.infrastructure.repository
         public SQLiteConnection GetDatabaseConnection()
         {
             return new SQLiteConnection("Data Source=" + _databaseFile);
+        }
+
+        private string GetInsertStatement()
+        {
+            return @"INSERT INTO TaxRateUSA ( 
+                        Zipcode
+                        , ZipPlus4StartRange
+                        , ZipPlus4EndRange
+                        , EffectiveDate
+                        , TaxRateState
+                        , TaxRateCounty 
+                        , TaxRateCity 
+                        , TaxRateLocal1 
+                        , TaxRateLocal2 
+                    ) VALUES ( 
+                        @Zipcode
+                        , @ZipPlus4StartRange
+                        , @ZipPlus4EndRange
+                        , @EffectiveDate
+                        , @TaxRateState
+                        , @TaxRateCounty
+                        , @TaxRateCity
+                        , @TaxRateLocal1
+                        , @TaxRateLocal2
+                    );
+                    SELECT last_insert_rowid();";
+        }
+
+        private string GetDeleteStatement()
+        {
+            return $"DELETE FROM TaxRateUSA WHERE Id = @Id;";
+        }
+
+        private string GetUpdateStatement()
+        {
+            return @"UPDATE TaxRateUSA ( 
+                     SET
+                        Zipcode = @Zipcode
+                        , ZipPlus4StartRange = @ZipPlus4StartRange
+                        , ZipPlus4EndRange = @ZipPlus4EndRange
+                        , EffectiveDate = @EffectiveDate
+                        , TaxRateState = @TaxRateState
+                        , TaxRateCounty = @TaxRateCounty 
+                        , TaxRateCity = @TaxRateCity 
+                        , TaxRateLocal1 = @TaxRateLocal1 
+                        , TaxRateLocal2 = @TaxRateLocal2 
+                    WHERE Id = @Id;";
+        }
+
+        private string GetFetchByIdStatement()
+        {
+            return @"SELECT ( 
+                        Zipcode
+                        , ZipPlus4StartRange
+                        , ZipPlus4EndRange
+                        , datetime(EffectiveDate,'unixepoch') AS EffectiveDate
+                        , TaxRateState
+                        , TaxRateCounty 
+                        , TaxRateCity 
+                        , TaxRateLocal1 
+                        , TaxRateLocal2 
+                    FROM TaxRateUSA WHERE Id = @Id;";
+        }
+
+        private string GetFetchByZipcodeStatement()
+        {
+            return @"SELECT ( 
+                        Zipcode
+                        , ZipPlus4StartRange
+                        , ZipPlus4EndRange
+                        , datetime(EffectiveDate,'unixepoch') AS EffectiveDate
+                        , TaxRateState
+                        , TaxRateCounty 
+                        , TaxRateCity 
+                        , TaxRateLocal1 
+                        , TaxRateLocal2 
+                    FROM 
+                        TaxRateUSA 
+                    WHERE 
+                        Zipcode = @Zipcode
+                        AND ZipPlus4StartRange <= @ZipPlus4
+                        AND ZipPlus4EndRange >= @ZipPlus4
+                        AND EffectiveDate <= @EffectiveDate
+                    ORDER BY
+                        EffectiveDate
+                    LIMIT 1;";
         }
 
     }

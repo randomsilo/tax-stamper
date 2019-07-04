@@ -9,6 +9,6 @@ namespace tax_stamper.domain.repository
         long Delete(TaxRateUSA record);
         long Update(TaxRateUSA record);
         TaxRateUSA FetchById(long id);
-        TaxRateUSA FetchByZipcode(int zipcode, int zipPlus4);
+        TaxRateUSA FetchByZipcode(int zipcode, int zipPlus4, DateTime onDate);
     }
 }

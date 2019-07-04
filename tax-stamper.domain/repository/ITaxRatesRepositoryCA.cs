@@ -9,6 +9,6 @@ namespace tax_stamper.domain.repository
         long Delete(TaxRateCA record);
         long Update(TaxRateCA record);
         TaxRateCA FetchById(long id);
-        TaxRateCA FetchByZipcode(string ForwardStation, string LocalDeliveryUnit);
+        TaxRateCA FetchByZipcode(string ForwardStation, string LocalDeliveryUnit, DateTime onDate);
     }
 }
