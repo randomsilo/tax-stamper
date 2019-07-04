@@ -46,16 +46,17 @@ The goal is to create a asp core web api micro service that takes in some postal
       - [ ] Simple Header Check
   - [ ] Domain
     - [ ] Model
-      - [ ] TaxSearchUSA
-      - [ ] TaxSearchCA
-      - [ ] TaxResultsUSA
-      - [ ] TaxResultsCA
-    - [ ] Repository
-      - [ ] ITaxRatesRepositoryUSA
-      - [ ] ITaxRatesRepositoryCA
-    - [ ] Service
-      - [ ] IFindTaxRatesUSA
-      - [ ] IFindTaxRatesCA
+      - [x] TaxSearchUSA
+      - [x] TaxSearchCA
+      - [x] TaxResultsUSA
+      - [x] TaxResultsCA
+      - [ ] Validation
+    - [x] Repository
+      - [x] ITaxRatesRepositoryUSA
+      - [x] ITaxRatesRepositoryCA
+    - [x] Service
+      - [x] IFindTaxRatesUSA
+      - [x] IFindTaxRatesCA
   - [ ] Infrastructure
     - [ ] Repository
       - [ ] SqliteTaxRatesRepositoryUSA
