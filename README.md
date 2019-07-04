@@ -8,18 +8,18 @@ The goal is to create a asp core web api micro service that takes in some postal
 
 ## Outline
 
-- [ ] Basics
+- [x] Basics
   - [x] Readme 
   - [x] Changelog
-  - [ ] File System
-- [ ] Project Structure
-  - [ ] Api
-  - [ ] Api Test
-  - [ ] Domain
-  - [ ] Domain Test
-  - [ ] Infrastructure
-  - [ ] Infrastructure Test
-  - [ ] Console Application
+  - [x] File System
+- [x] Project Structure
+  - [x] Api
+  - [x] Api Test
+  - [x] Domain
+  - [x] Domain Test
+  - [x] Infrastructure
+  - [x] Infrastructure Test
+  - [x] Utility (Console Application)
 - [ ] Tax Stamper
   - [ ] Api
     - [ ] Routes
