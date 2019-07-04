@@ -7,12 +7,22 @@ Documenting the commands used will be a huge time saving as new microservices ar
 ## File System
 
 ```bash
+# project directories
 mkdir -p ./tax-stamper.api
 mkdir -p ./tax-stamper.domain
 mkdir -p ./tax-stamper.domain.test
 mkdir -p ./tax-stamper.infrastructure
 mkdir -p ./tax-stamper.infrastructure.test
 mkdir -p ./tax-stamper.utility
+
+# data directory
+##
+## Environment variable is an option; however, the docker container
+## will need to mount a file system to allow the containers to spawn
+## without loss of data.  Choosing /opt/data until a better choice 
+## is made.
+sudo mkdir -p /opt/data
+sudo chown USER:GROUP /opt/data
 ```
 
 ## Projects
