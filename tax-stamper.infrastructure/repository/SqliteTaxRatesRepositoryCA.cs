@@ -11,11 +11,11 @@ using tax_stamper.domain.repository;
 
 namespace tax_stamper.infrastructure.repository
 {
-    public class SqliteTaxRatesRepositoryUSA : ITaxRatesRepositoryUSA
+    public class SqliteTaxRatesRepositoryCA : ITaxRatesRepositoryCA
     {
         private ILogger _logger;
         private string _databaseFile { get; set; }
-        public SqliteTaxRatesRepositoryUSA(ILogger logger, string name, string instanceDirectory, string baseDirectory = @"/opt/data")
+        public SqliteTaxRatesRepositoryCA(ILogger logger, string name, string instanceDirectory, string baseDirectory = @"/opt/data")
         {
             // logger
             _logger = logger;
@@ -42,7 +42,7 @@ namespace tax_stamper.infrastructure.repository
             }
         }
 
-        public long Create(TaxRateUSA record)
+        public long Create(TaxRateCA record)
         {
             _logger.Verbose($"{this.GetType().Name} IN Create");
 
@@ -57,7 +57,7 @@ namespace tax_stamper.infrastructure.repository
             _logger.Verbose($"{this.GetType().Name} OUT Create, id is {id}");
             return id;
         }
-        public long Delete(TaxRateUSA record)
+        public long Delete(TaxRateCA record)
         {
             _logger.Verbose($"{this.GetType().Name} IN Delete");
 
@@ -72,7 +72,7 @@ namespace tax_stamper.infrastructure.repository
             _logger.Verbose($"{this.GetType().Name} OUT Delete, rowsDeleted is {rowsDeleted}");
             return rowsDeleted;
         }
-        public long Update(TaxRateUSA record)
+        public long Update(TaxRateCA record)
         {
             _logger.Verbose($"{this.GetType().Name} IN Update");
 
@@ -87,35 +87,35 @@ namespace tax_stamper.infrastructure.repository
             _logger.Verbose($"{this.GetType().Name} OUT Delete, rowsUpdated is {rowsUpdated}");
             return rowsUpdated;
         }
-        public TaxRateUSA FetchById(long id)
+        public TaxRateCA FetchById(long id)
         {
             _logger.Verbose($"{this.GetType().Name} IN FetchById");
 
-            var model = new TaxRateUSA();
+            var model = new TaxRateCA();
 
             using (var connection = GetDatabaseConnection())
             {
                 connection.Open();
-                model = connection.Query<TaxRateUSA>(GetFetchByIdStatement(), new { Id = id }).FirstOrDefault();
+                model = connection.Query<TaxRateCA>(GetFetchByIdStatement(), new { Id = id }).FirstOrDefault();
             }
 
             _logger.Verbose($"{this.GetType().Name} OUT FetchById");
             return model;
         }
-        public TaxRateUSA FetchByZipcode(int zipcode, int zipPlus4, DateTime onDate)
+        public TaxRateCA FetchByZipcode(string forwardStation, string localDeliveryUnit, DateTime onDate)
         {
             _logger.Verbose($"{this.GetType().Name} IN FetchByZipcode");
 
-            var model = new TaxRateUSA();
+            var model = new TaxRateCA();
 
             using (var connection = GetDatabaseConnection())
             {
                 connection.Open();
-                model = connection.Query<TaxRateUSA>(
+                model = connection.Query<TaxRateCA>(
                     GetFetchByZipcodeStatement()
                     , new { 
-                        Zipcode = zipcode
-                        , ZipPlus4 = zipPlus4
+                        ForwardStation = forwardStation
+                        , LocalDeliveryUnit = localDeliveryUnit
                         , EffectiveDate = onDate
                     }).FirstOrDefault();
             }
@@ -133,20 +133,17 @@ namespace tax_stamper.infrastructure.repository
             {
                 connection.Open();
                 connection.Execute(
-                    @"CREATE TABLE TaxRateUSA
+                    @"CREATE TABLE TaxRateCA
                     (
                         Id                      INTEGER PRIMARY KEY AUTOINCREMENT
-                        , Zipcode               INTEGER NOT NULL
-                        , ZipPlus4StartRange    INTEGER NOT NULL
-                        , ZipPlus4EndRange      INTEGER NOT NULL
+                        , ForwardStation        TEXT NOT NULL
+                        , LocalDeliveryUnit     TEXT NOT NULL
                         , EffectiveDate         DATETIME NOT NULL
-                        , TaxRateState          REAL NOT NULL
-                        , TaxRateCounty         REAL NOT NULL
-                        , TaxRateCity           REAL NOT NULL
-                        , TaxRateLocal1         REAL NOT NULL
-                        , TaxRateLocal2         REAL NOT NULL
+                        , TaxRateGST            REAL NOT NULL
+                        , TaxRatePST            REAL NOT NULL
+                        , TaxRateHST            REAL NOT NULL
                     );
-                    CREATE INDEX idx_taxrateusa_searchkey ON TaxRateUSA (Zipcode, ZipPlus4StartRange, ZipPlus4EndRange, EffectiveDate);
+                    CREATE INDEX idx_taxrateca_searchkey ON TaxRateCA (ForwardStation, LocalDeliveryUnit, EffectiveDate);
                     ");
                 
             }
@@ -160,28 +157,22 @@ namespace tax_stamper.infrastructure.repository
         private string GetInsertStatement()
         {
             _logger.Verbose($"{this.GetType().Name} IN GetInsertStatement");
-            var sql = @"INSERT INTO TaxRateUSA ( 
-                        Zipcode
-                        , ZipPlus4StartRange
-                        , ZipPlus4EndRange
-                        , EffectiveDate
-                        , TaxRateState
-                        , TaxRateCounty 
-                        , TaxRateCity 
-                        , TaxRateLocal1 
-                        , TaxRateLocal2 
-                    ) VALUES ( 
-                        @Zipcode
-                        , @ZipPlus4StartRange
-                        , @ZipPlus4EndRange
-                        , @EffectiveDate
-                        , @TaxRateState
-                        , @TaxRateCounty
-                        , @TaxRateCity
-                        , @TaxRateLocal1
-                        , @TaxRateLocal2
-                    );
-                    SELECT last_insert_rowid();";
+            var sql = @"INSERT INTO TaxRateCA ( 
+                            ForwardStation
+                            , LocalDeliveryUnit
+                            , EffectiveDate
+                            , TaxRateGST
+                            , TaxRatePST 
+                            , TaxRateHST 
+                        ) VALUES ( 
+                            @ForwardStation
+                            , @LocalDeliveryUnit
+                            , @EffectiveDate
+                            , @TaxRateGST
+                            , @TaxRatePST
+                            , @TaxRateHST
+                        );
+                        SELECT last_insert_rowid();";
 
             _logger.Verbose(sql);
             return sql;
@@ -190,7 +181,7 @@ namespace tax_stamper.infrastructure.repository
         private string GetDeleteStatement()
         {
             _logger.Verbose($"{this.GetType().Name} IN GetDeleteStatement");
-            var sql = $"DELETE FROM TaxRateUSA WHERE Id = @Id;";
+            var sql = $"DELETE FROM TaxRateCA WHERE Id = @Id;";
 
             _logger.Verbose(sql);
             return sql;
@@ -199,18 +190,15 @@ namespace tax_stamper.infrastructure.repository
         private string GetUpdateStatement()
         {
             _logger.Verbose($"{this.GetType().Name} IN GetUpdateStatement");
-            var sql = @"UPDATE TaxRateUSA
-                     SET
-                        Zipcode = @Zipcode
-                        , ZipPlus4StartRange = @ZipPlus4StartRange
-                        , ZipPlus4EndRange = @ZipPlus4EndRange
-                        , EffectiveDate = @EffectiveDate
-                        , TaxRateState = @TaxRateState
-                        , TaxRateCounty = @TaxRateCounty 
-                        , TaxRateCity = @TaxRateCity 
-                        , TaxRateLocal1 = @TaxRateLocal1 
-                        , TaxRateLocal2 = @TaxRateLocal2 
-                    WHERE Id = @Id;";
+            var sql = @"UPDATE TaxRateCA
+                        SET
+                            ForwardStation = @ForwardStation
+                            , LocalDeliveryUnit = @LocalDeliveryUnit
+                            , EffectiveDate = @EffectiveDate
+                            , TaxRateGST = @TaxRateGST
+                            , TaxRatePST = @TaxRatePST 
+                            , TaxRateHST = @TaxRateHST 
+                        WHERE Id = @Id;";
 
             _logger.Verbose(sql);
             return sql;
@@ -220,17 +208,14 @@ namespace tax_stamper.infrastructure.repository
         {
             _logger.Verbose($"{this.GetType().Name} IN GetFetchByIdStatement");
             var sql = @"SELECT
-                        Id
-                        , Zipcode
-                        , ZipPlus4StartRange
-                        , ZipPlus4EndRange
-                        , datetime(EffectiveDate,'unixepoch') AS EffectiveDate
-                        , TaxRateState
-                        , TaxRateCounty 
-                        , TaxRateCity 
-                        , TaxRateLocal1 
-                        , TaxRateLocal2 
-                    FROM TaxRateUSA WHERE Id = @Id;";
+                            Id
+                            , ForwardStation
+                            , LocalDeliveryUnit
+                            , datetime(EffectiveDate,'unixepoch') AS EffectiveDate
+                            , TaxRateGST
+                            , TaxRatePST 
+                            , TaxRateHST 
+                        FROM TaxRateCA WHERE Id = @Id;";
 
             _logger.Verbose(sql);
             return sql;
@@ -240,26 +225,22 @@ namespace tax_stamper.infrastructure.repository
         {
             _logger.Verbose($"{this.GetType().Name} IN GetFetchByZipcodeStatement");
             var sql =  @"SELECT 
-                        Id
-                        , Zipcode
-                        , ZipPlus4StartRange
-                        , ZipPlus4EndRange
-                        , datetime(EffectiveDate,'unixepoch') AS EffectiveDate
-                        , TaxRateState
-                        , TaxRateCounty 
-                        , TaxRateCity 
-                        , TaxRateLocal1 
-                        , TaxRateLocal2 
-                    FROM 
-                        TaxRateUSA 
-                    WHERE 
-                        Zipcode = @Zipcode
-                        AND ZipPlus4StartRange <= @ZipPlus4
-                        AND ZipPlus4EndRange >= @ZipPlus4
-                        AND EffectiveDate <= @EffectiveDate
-                    ORDER BY
-                        EffectiveDate
-                    LIMIT 1;";
+                            Id
+                            , ForwardStation
+                            , LocalDeliveryUnit
+                            , datetime(EffectiveDate,'unixepoch') AS EffectiveDate
+                            , TaxRateGST
+                            , TaxRatePST 
+                            , TaxRateHST 
+                        FROM 
+                            TaxRateCA 
+                        WHERE 
+                            ForwardStation = @ForwardStation
+                            AND LocalDeliveryUnit = @LocalDeliveryUnit
+                            AND EffectiveDate <= @EffectiveDate
+                        ORDER BY
+                            EffectiveDate
+                        LIMIT 1;";
 
             _logger.Verbose(sql);
             return sql;

@@ -8,7 +8,7 @@ using tax_stamper.infrastructure.repository;
 
 namespace tax_stamper.infrastructure.test.repository
 {
-    public class SqliteTaxRatesRepositoryUSATest
+    public class SqliteTaxRatesRepositoryCATest
     {
         private ILogger GetLogger(string instancePath, string name)
         {
@@ -27,21 +27,18 @@ namespace tax_stamper.infrastructure.test.repository
         [Fact]
         public void CreateTest()
         {
-            var instancePath = "xunit_tests/tax-stamper/TaxRatesRepoUSA";
+            var instancePath = "xunit_tests/tax-stamper/TaxRatesRepoCA";
             var logger = GetLogger(instancePath, "CreateTest");
 
-            ITaxRatesRepositoryUSA repository = new SqliteTaxRatesRepositoryUSA(logger, "CreateTest_TaxRateRepo", instancePath);
+            ITaxRatesRepositoryCA repository = new SqliteTaxRatesRepositoryCA(logger, "CreateTest_TaxRateRepo", instancePath);
 
-            var record = new TaxRateUSA() {
-                Zipcode = 68136
-                , ZipPlus4StartRange = 0
-                , ZipPlus4EndRange = 9999
+            var record = new TaxRateCA() {
+                ForwardStation = "K8N"
+                , LocalDeliveryUnit = "5W6"
                 , EffectiveDate = new DateTime(1941, 1, 1)
-                , TaxRateState = 0.07
-                , TaxRateCounty = 0.05
-                , TaxRateCity = 0.03
-                , TaxRateLocal1 = 0.02
-                , TaxRateLocal2 = 0.01
+                , TaxRateGST = 0.07
+                , TaxRatePST = 0.05
+                , TaxRateHST = 0.03
             };
 
             long id = repository.Create(record);
@@ -52,21 +49,18 @@ namespace tax_stamper.infrastructure.test.repository
         [Fact]
         public void CreateFetchUpdateDeleteTest()
         {
-            var instancePath = "xunit_tests/tax-stamper/TaxRatesRepoUSA";
+            var instancePath = "xunit_tests/tax-stamper/TaxRatesRepoCA";
             var logger = GetLogger(instancePath, "CreateFetchUpdateDeleteTest");
 
-            ITaxRatesRepositoryUSA repository = new SqliteTaxRatesRepositoryUSA(logger, "CFUD_TaxRateRepo", instancePath);
+            ITaxRatesRepositoryCA repository = new SqliteTaxRatesRepositoryCA(logger, "CFUD_TaxRateRepo", instancePath);
 
-            var record = new TaxRateUSA() {
-                Zipcode = 68136
-                , ZipPlus4StartRange = 0
-                , ZipPlus4EndRange = 9999
+            var record = new TaxRateCA() {
+                ForwardStation = "K8N"
+                , LocalDeliveryUnit = "5W6"
                 , EffectiveDate = new DateTime(1941, 1, 1)
-                , TaxRateState = 0.07
-                , TaxRateCounty = 0.05
-                , TaxRateCity = 0.03
-                , TaxRateLocal1 = 0.02
-                , TaxRateLocal2 = 0.01
+                , TaxRateGST = 0.07
+                , TaxRatePST = 0.05
+                , TaxRateHST = 0.03
             };
 
             // create record
@@ -78,8 +72,8 @@ namespace tax_stamper.infrastructure.test.repository
             Assert.Equal(id, fetchedRecord.Id);
 
             // update object
-            fetchedRecord.TaxRateState = 0.077;
-            fetchedRecord.TaxRateCounty = 0.055;
+            fetchedRecord.TaxRateGST = 0.077;
+            fetchedRecord.TaxRatePST = 0.055;
 
             // update record
             var updatedRecords = repository.Update(fetchedRecord);
@@ -87,8 +81,8 @@ namespace tax_stamper.infrastructure.test.repository
 
             // confirm update
             var updatedRecord = repository.FetchById(id);
-            Assert.Equal(fetchedRecord.TaxRateState, updatedRecord.TaxRateState);
-            Assert.Equal(fetchedRecord.TaxRateCounty, updatedRecord.TaxRateCounty);
+            Assert.Equal(fetchedRecord.TaxRateGST, updatedRecord.TaxRateGST);
+            Assert.Equal(fetchedRecord.TaxRatePST, updatedRecord.TaxRatePST);
 
             // delete record
             var deletedRecords = repository.Delete(updatedRecord);
@@ -99,24 +93,20 @@ namespace tax_stamper.infrastructure.test.repository
             Assert.Null(deletedRecord);
         }
 
-        [Fact]
         public void FindByZipcodeTest()
         {
-            var instancePath = "xunit_tests/tax-stamper/TaxRatesRepoUSA";
-            var logger = GetLogger(instancePath, "FindByZipcodeTest");
+            var instancePath = "xunit_tests/tax-stamper/TaxRatesRepoCA";
+            var logger = GetLogger(instancePath, "CreateFetchUpdateDeleteTest");
 
-            ITaxRatesRepositoryUSA repository = new SqliteTaxRatesRepositoryUSA(logger, "FindByZipcode_TaxRateRepo", instancePath);
+            ITaxRatesRepositoryCA repository = new SqliteTaxRatesRepositoryCA(logger, "FindByZipcode_TaxRateRepo", instancePath);
 
-            var record = new TaxRateUSA() {
-                Zipcode = 68136
-                , ZipPlus4StartRange = 0
-                , ZipPlus4EndRange = 9999
+            var record = new TaxRateCA() {
+                ForwardStation = "K8N"
+                , LocalDeliveryUnit = "5W6"
                 , EffectiveDate = new DateTime(1960, 2, 10)
-                , TaxRateState = 0.07
-                , TaxRateCounty = 0.05
-                , TaxRateCity = 0.03
-                , TaxRateLocal1 = 0.02
-                , TaxRateLocal2 = 0.01
+                , TaxRateGST = 0.07
+                , TaxRatePST = 0.05
+                , TaxRateHST = 0.03
             };
 
             // create record
@@ -124,11 +114,11 @@ namespace tax_stamper.infrastructure.test.repository
             Assert.True(id > 0); 
 
             // fetch record
-            var fetchedRecord = repository.FetchByZipcode(68136, 1000, new DateTime(1960, 2, 20));
+            var fetchedRecord = repository.FetchByZipcode("K8N", "5W6", new DateTime(1960, 2, 20));
             Assert.Equal(id, fetchedRecord.Id);
 
             // fetch record
-            var fetchNullRecord = repository.FetchByZipcode(68136, 1000, new DateTime(1960, 1, 20));
+            var fetchNullRecord = repository.FetchByZipcode("K8N", "5W6", new DateTime(1960, 1, 20));
             Assert.Null(fetchNullRecord);
 
         }
