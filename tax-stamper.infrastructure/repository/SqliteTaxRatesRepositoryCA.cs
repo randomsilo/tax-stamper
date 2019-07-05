@@ -102,7 +102,7 @@ namespace tax_stamper.infrastructure.repository
             _logger.Verbose($"{this.GetType().Name} OUT FetchById");
             return model;
         }
-        public TaxRateCA FetchByZipcode(string forwardStation, string localDeliveryUnit, DateTime onDate)
+        public TaxRateCA FetchByZipcode(string ForwardStationArea, string localDeliveryUnit, DateTime onDate)
         {
             _logger.Verbose($"{this.GetType().Name} IN FetchByZipcode");
 
@@ -114,7 +114,7 @@ namespace tax_stamper.infrastructure.repository
                 model = connection.Query<TaxRateCA>(
                     GetFetchByZipcodeStatement()
                     , new { 
-                        ForwardStation = forwardStation
+                        ForwardStationArea = ForwardStationArea
                         , LocalDeliveryUnit = localDeliveryUnit
                         , EffectiveDate = onDate
                     }).FirstOrDefault();
@@ -136,14 +136,14 @@ namespace tax_stamper.infrastructure.repository
                     @"CREATE TABLE TaxRateCA
                     (
                         Id                      INTEGER PRIMARY KEY AUTOINCREMENT
-                        , ForwardStation        TEXT NOT NULL
+                        , ForwardStationArea        TEXT NOT NULL
                         , LocalDeliveryUnit     TEXT NOT NULL
                         , EffectiveDate         DATETIME NOT NULL
                         , TaxRateGST            REAL NOT NULL
                         , TaxRatePST            REAL NOT NULL
                         , TaxRateHST            REAL NOT NULL
                     );
-                    CREATE INDEX idx_taxrateca_searchkey ON TaxRateCA (ForwardStation, LocalDeliveryUnit, EffectiveDate);
+                    CREATE INDEX idx_taxrateca_searchkey ON TaxRateCA (ForwardStationArea, LocalDeliveryUnit, EffectiveDate);
                     ");
                 
             }
@@ -158,14 +158,14 @@ namespace tax_stamper.infrastructure.repository
         {
             _logger.Verbose($"{this.GetType().Name} IN GetInsertStatement");
             var sql = @"INSERT INTO TaxRateCA ( 
-                            ForwardStation
+                            ForwardStationArea
                             , LocalDeliveryUnit
                             , EffectiveDate
                             , TaxRateGST
                             , TaxRatePST 
                             , TaxRateHST 
                         ) VALUES ( 
-                            @ForwardStation
+                            @ForwardStationArea
                             , @LocalDeliveryUnit
                             , @EffectiveDate
                             , @TaxRateGST
@@ -192,7 +192,7 @@ namespace tax_stamper.infrastructure.repository
             _logger.Verbose($"{this.GetType().Name} IN GetUpdateStatement");
             var sql = @"UPDATE TaxRateCA
                         SET
-                            ForwardStation = @ForwardStation
+                            ForwardStationArea = @ForwardStationArea
                             , LocalDeliveryUnit = @LocalDeliveryUnit
                             , EffectiveDate = @EffectiveDate
                             , TaxRateGST = @TaxRateGST
@@ -209,7 +209,7 @@ namespace tax_stamper.infrastructure.repository
             _logger.Verbose($"{this.GetType().Name} IN GetFetchByIdStatement");
             var sql = @"SELECT
                             Id
-                            , ForwardStation
+                            , ForwardStationArea
                             , LocalDeliveryUnit
                             , datetime(EffectiveDate,'unixepoch') AS EffectiveDate
                             , TaxRateGST
@@ -226,7 +226,7 @@ namespace tax_stamper.infrastructure.repository
             _logger.Verbose($"{this.GetType().Name} IN GetFetchByZipcodeStatement");
             var sql =  @"SELECT 
                             Id
-                            , ForwardStation
+                            , ForwardStationArea
                             , LocalDeliveryUnit
                             , datetime(EffectiveDate,'unixepoch') AS EffectiveDate
                             , TaxRateGST
@@ -235,7 +235,7 @@ namespace tax_stamper.infrastructure.repository
                         FROM 
                             TaxRateCA 
                         WHERE 
-                            ForwardStation = @ForwardStation
+                            ForwardStationArea = @ForwardStationArea
                             AND LocalDeliveryUnit = @LocalDeliveryUnit
                             AND EffectiveDate <= @EffectiveDate
                         ORDER BY

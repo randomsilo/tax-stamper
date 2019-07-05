@@ -33,7 +33,7 @@ namespace tax_stamper.infrastructure.test.repository
             ITaxRatesRepositoryCA repository = new SqliteTaxRatesRepositoryCA(logger, "CreateTest_TaxRateRepo", instancePath);
 
             var record = new TaxRateCA() {
-                ForwardStation = "K8N"
+                ForwardStationArea = "K8N"
                 , LocalDeliveryUnit = "5W6"
                 , EffectiveDate = new DateTime(1941, 1, 1)
                 , TaxRateGST = 0.07
@@ -55,7 +55,7 @@ namespace tax_stamper.infrastructure.test.repository
             ITaxRatesRepositoryCA repository = new SqliteTaxRatesRepositoryCA(logger, "CFUD_TaxRateRepo", instancePath);
 
             var record = new TaxRateCA() {
-                ForwardStation = "K8N"
+                ForwardStationArea = "K8N"
                 , LocalDeliveryUnit = "5W6"
                 , EffectiveDate = new DateTime(1941, 1, 1)
                 , TaxRateGST = 0.07
@@ -101,7 +101,7 @@ namespace tax_stamper.infrastructure.test.repository
             ITaxRatesRepositoryCA repository = new SqliteTaxRatesRepositoryCA(logger, "FindByZipcode_TaxRateRepo", instancePath);
 
             var record = new TaxRateCA() {
-                ForwardStation = "K8N"
+                ForwardStationArea = "K8N"
                 , LocalDeliveryUnit = "5W6"
                 , EffectiveDate = new DateTime(1960, 2, 10)
                 , TaxRateGST = 0.07
