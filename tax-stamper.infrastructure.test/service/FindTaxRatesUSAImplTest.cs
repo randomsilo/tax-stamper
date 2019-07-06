@@ -86,7 +86,7 @@ namespace tax_stamper.infrastructure.test.service
                 , GetSalesTaxRatesRepositoryUSA(logger, name+"_SalesTax", instancePath)
             );
 
-            // find record
+            // find record - Sales
             search = new TaxSearchUSA()
             {
                 Zipcode = "68136"
@@ -100,6 +100,21 @@ namespace tax_stamper.infrastructure.test.service
             Assert.Equal(0.04, results.TaxRateCity);
             Assert.Equal(0.03, results.TaxRateLocal1);
             Assert.Equal(0.02, results.TaxRateLocal2);
+
+            // find record - Use
+            search = new TaxSearchUSA()
+            {
+                Zipcode = "68136"
+                , ZipPlus4 = "2121"
+                , OnDate = DateTime.Now
+            };
+            results = service.FindUseTaxRates(search);
+
+            Assert.Equal(0.07, results.TaxRateState);
+            Assert.Equal(0.05, results.TaxRateCounty);
+            Assert.Equal(0.03, results.TaxRateCity);
+            Assert.Equal(0.02, results.TaxRateLocal1);
+            Assert.Equal(0.01, results.TaxRateLocal2);
             
             // bad data - Zipcode
             search = new TaxSearchUSA()
