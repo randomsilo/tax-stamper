@@ -14,7 +14,6 @@ The goal is to create a asp core web api micro service that takes in some postal
   - [x] File System
 - [x] Project Structure
   - [x] Api
-  - [x] Api Test
   - [x] Domain
   - [x] Domain Test
   - [x] Infrastructure
@@ -44,26 +43,26 @@ The goal is to create a asp core web api micro service that takes in some postal
           - [ ] Outputs: application name, version
     - [ ] Authentication
       - [ ] Simple Header Check
-  - [ ] Domain
-    - [ ] Model
+  - [x] Domain
+    - [x] Model
       - [x] TaxSearchUSA
       - [x] TaxSearchCA
       - [x] TaxResultsUSA
       - [x] TaxResultsCA
-      - [ ] Validation
+      - [x] Validation
     - [x] Repository
       - [x] ITaxRatesRepositoryUSA
       - [x] ITaxRatesRepositoryCA
     - [x] Service
       - [x] IFindTaxRatesUSA
       - [x] IFindTaxRatesCA
-  - [ ] Infrastructure
-    - [ ] Repository
-      - [ ] SqliteTaxRatesRepositoryUSA
-      - [ ] SqliteTaxRatesRepositoryCA
-    - [ ] Service
-      - [ ] FindTaxRatesUSAImpl
-      - [ ] FindTaxRatesCAImpl
+  - [x] Infrastructure
+    - [x] Repository
+      - [x] SqliteTaxRatesRepositoryUSA
+      - [x] SqliteTaxRatesRepositoryCA
+    - [x] Service
+      - [x] FindTaxRatesUSAImpl
+      - [x] FindTaxRatesCAImpl
 
 ## References
 
