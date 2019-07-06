@@ -93,6 +93,7 @@ namespace tax_stamper.infrastructure.test.repository
             Assert.Null(deletedRecord);
         }
 
+        [Fact]
         public void FindByZipcodeTest()
         {
             var instancePath = "xunit_tests/tax-stamper/TaxRatesRepoCA";

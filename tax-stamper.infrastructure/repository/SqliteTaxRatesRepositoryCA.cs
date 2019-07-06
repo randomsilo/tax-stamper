@@ -239,7 +239,7 @@ namespace tax_stamper.infrastructure.repository
                             AND LocalDeliveryUnit = @LocalDeliveryUnit
                             AND EffectiveDate <= @EffectiveDate
                         ORDER BY
-                            EffectiveDate
+                            EffectiveDate, Id desc
                         LIMIT 1;";
 
             _logger.Verbose(sql);
