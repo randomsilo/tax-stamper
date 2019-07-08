@@ -8,3 +8,4 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 ## [Unreleased] - [0.1.0]
 
 - setup project basics: readme, changelog, file system, outline
+- added FindTaxRatesController: able to find use and sales tax rates for USA and Canada based on postal data
