@@ -1,0 +1,16 @@
+{
+    "searchCriteria": {
+        "zipcode": "68136",
+        "zipPlus4": "1234",
+        "onDate": "2019-01-01T00:00:00"
+    },
+    "searchResults": {
+        "taxRateState": 0.08,
+        "taxRateCounty": 0.06,
+        "taxRateCity": 0.04,
+        "taxRateLocal1": 0.03,
+        "taxRateLocal2": 0.02
+    },
+    "apiSuccess": true,
+    "apiMessage": ""
+}

@@ -1,0 +1,14 @@
+{
+    "searchCriteria": {
+        "forwardStationArea": "K8N",
+        "localDeliveryUnit": "5W6",
+        "onDate": "2019-01-01T00:00:00"
+    },
+    "searchResults": {
+        "taxRateGST": 0.07,
+        "taxRatePST": 0.05,
+        "taxRateHST": 0.03
+    },
+    "apiSuccess": true,
+    "apiMessage": ""
+}

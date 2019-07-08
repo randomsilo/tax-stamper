@@ -22,19 +22,19 @@ The goal is to create a asp core web api micro service that takes in some postal
 - [ ] Tax Stamper
   - [ ] Api
     - [ ] Routes
-      - [ ] Business Value
-        - [ ] GetUseTaxRatesUSA
-          - [ ] Inputs: zip code plus 4, date
-          - [ ] Outputs: state, county, city, local 1, and local 2 tax rates
-        - [ ] GetSalesTaxRatesUSA
-          - [ ] Inputs: zip code plus 4, date
-          - [ ] Outputs: state, county, city, local 1, and local 2 tax rates
-        - [ ] GetUseTaxRatesCA
-          - [ ] Inputs: forward station, local delivery unit, date
-          - [ ] Outputs: GST, PST, HST tax rates
-        - [ ] GetSalesTaxRatesCA
-          - [ ] Inputs: forward station, local delivery unit, date
-          - [ ] Outputs: GST, PST, HST tax rates
+      - [x] Business Value
+        - [x] GetUseTaxRatesUSA
+          - [x] Inputs: zip code plus 4, date
+          - [x] Outputs: state, county, city, local 1, and local 2 tax rates
+        - [x] GetSalesTaxRatesUSA
+          - [x] Inputs: zip code plus 4, date
+          - [x] Outputs: state, county, city, local 1, and local 2 tax rates
+        - [x] GetUseTaxRatesCA
+          - [x] Inputs: forward station, local delivery unit, date
+          - [x] Outputs: GST, PST, HST tax rates
+        - [x] GetSalesTaxRatesCA
+          - [x] Inputs: forward station, local delivery unit, date
+          - [x] Outputs: GST, PST, HST tax rates
       - [ ] Dev Ops
         - [ ] Health Check
           - [ ] Inputs: Auth Token
